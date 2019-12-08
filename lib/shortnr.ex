@@ -14,6 +14,8 @@ defmodule Shortnr do
       {Plug.Cowboy, scheme: :http, plug: Shortnr.Router, options: [port: port]}
     ]
 
+    :dets.open_file(:urls, type: :set)
+
     Logger.info("server starting", port: port)
     Supervisor.start_link(children, strategy: :one_for_one)
   end

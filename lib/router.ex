@@ -4,32 +4,45 @@ defmodule Shortnr.Router do
 
   require Logger
 
-  alias Shortnr.Transport.{Json, Http}
-  alias Shortnr.Url
+  alias Shortnr.Transport.{Text, Http}
+  alias Shortnr.URL
 
   plug(Plug.Logger, log: :debug)
   plug(:match)
   plug(:dispatch)
 
-  post "/urls" do
-    conn
-    |> Json.decode_request(Url.CreateRequest)
-    |> Http.handle(&Url.create(&1, Url.Repo.DETS))
-    |> Json.encode_response()
+  post "/urls/:url" do
+    {:ok, url, conn}
+    |> Http.handle(&URL.create(&1, URL.Repo.DETS))
+    |> Text.encode_response()
     |> Http.send(:created, conn)
+  end
+
+  get "/urls" do
+    {:ok, :ignore, conn}
+    |> Http.handle(fn -> URL.list(URL.Repo.DETS) end)
+    |> Text.encode_response()
+    |> Http.send(:ok, conn)
+  end
+
+  get "/:id" do
+    {:ok, id, conn}
+    |> Http.handle(&URL.get(&1, URL.Repo.DETS))
+    |> Text.encode_response()
+    |> Http.send(:found, conn)
   end
 
   match _ do
     {:error, {:not_found, "route not found"}, conn}
-    |> Json.encode_response()
+    |> Text.encode_response()
     |> Http.send(:ignore, conn)
   end
 
   def handle_errors(conn, %{kind: _kind, reason: reason, stack: stack}) do
-    Logger.error(inspect(reason), stack: stack)
+    Logger.error(inspect(reason), stack: inspect(stack))
 
     {:error, {:internal_server_error, "internal server error"}, conn}
-    |> Json.encode_response()
+    |> Text.encode_response()
     |> Http.send(:ignore, conn)
   end
 end
