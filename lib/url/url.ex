@@ -1,18 +1,9 @@
 defmodule Shortnr.URL do
   alias Shortnr.Transport
   alias Shortnr.URL
+  alias Shortnr.URL.Util
 
-  defstruct id:
-              for(
-                _ <- 0..7,
-                into: "",
-                do:
-                  Enum.random(
-                    String.codepoints(
-                      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXWYZ0123456789"
-                    )
-                  )
-              ),
+  defstruct id: "",
             created_at: DateTime.utc_now(),
             updated_at: DateTime.utc_now(),
             url: %URI{}
@@ -21,7 +12,7 @@ defmodule Shortnr.URL do
 
   @spec create(String.t(), module()) :: {:ok, String.t()} | Transport.error()
   def create(url, repo) do
-    url_struct = %URL{url: URI.parse(url)}
+    url_struct = %URL{id: Util.gen_id(), url: URI.parse(url)}
     :ok = repo.put(url_struct)
     {:ok, url_struct.id}
   end
@@ -34,6 +25,12 @@ defmodule Shortnr.URL do
   @spec list(module()) :: {:ok, list(URL.t())} | Transport.error()
   def list(repo) do
     {:ok, _} = repo.list
+  end
+
+  @spec delete(String.t(), module()) :: {:ok, :ignore} | Tranpsport.error()
+  def delete(key, repo) do
+    :ok = repo.delete(key)
+    {:ok, "Success"}
   end
 
   defimpl String.Chars do

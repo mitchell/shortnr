@@ -17,4 +17,10 @@ defmodule Shortnr.URL.Repo.DETS do
     resp = :dets.select(:urls, [{:"$1", [], [:"$1"]}])
     {:ok, resp |> Enum.map(&elem(&1, 1))}
   end
+
+  @impl true
+  def delete(key) do
+    :ok = :dets.delete(:urls, key)
+    :ok
+  end
 end

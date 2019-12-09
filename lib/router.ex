@@ -32,6 +32,13 @@ defmodule Shortnr.Router do
     |> Http.send(:found, conn)
   end
 
+  delete "/:id" do
+    {:ok, id, conn}
+    |> Http.handle(&URL.delete(&1, URL.Repo.DETS))
+    |> Text.encode_response()
+    |> Http.send(:ok, conn)
+  end
+
   match _ do
     {:error, {:not_found, "route not found"}, conn}
     |> Text.encode_response()
