@@ -1,6 +1,6 @@
 FROM elixir:1.9-slim as build
 
-WORKDIR /root/shortnr/service
+WORKDIR /root/shortnr
 COPY . .
 
 RUN mix local.hex --force
@@ -11,7 +11,7 @@ RUN env MIX_ENV=prod mix release
 FROM debian:buster-20191014-slim
 
 WORKDIR /home/shortnr
-COPY --from=build /root/shortnr/service/_build/prod/rel/service/ .
+COPY --from=build /root/shortnr/_build/prod/rel/service/ .
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libtinfo5=6.1+20181013-2+deb10u2 \

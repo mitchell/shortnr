@@ -3,7 +3,10 @@ defmodule Shortnr.URL.Repo.DETS do
 
   @impl true
   def get(key) do
-    {:ok, :dets.lookup(:urls, key) |> List.first() |> elem(1)}
+    case :dets.lookup(:urls, key) |> List.first() do
+      {_, url} -> {:ok, url}
+      nil -> {:ok, nil}
+    end
   end
 
   @impl true

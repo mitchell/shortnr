@@ -8,7 +8,12 @@ defmodule Shortnr.URL do
             updated_at: DateTime.utc_now(),
             url: %URI{}
 
-  @type t :: %__MODULE__{id: String.t(), url: URI.t()}
+  @type t :: %__MODULE__{
+          id: String.t(),
+          url: URI.t(),
+          created_at: DateTime.t(),
+          updated_at: DateTime.t()
+        }
 
   @spec create(String.t(), module()) :: {:ok, String.t()} | Transport.error()
   def create(url, repo) do

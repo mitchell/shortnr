@@ -46,7 +46,7 @@ defmodule Shortnr.Router do
   end
 
   def handle_errors(conn, %{kind: _kind, reason: reason, stack: stack}) do
-    Logger.error(inspect(reason), stack: inspect(stack))
+    Logger.error(reason, stack: stack)
 
     {:error, {:internal_server_error, "internal server error"}, conn}
     |> Text.encode_response()
