@@ -10,16 +10,23 @@ defmodule Shortnr.URL do
 
   @type t :: %__MODULE__{
           id: String.t(),
-          url: URI.t(),
           created_at: DateTime.t(),
-          updated_at: DateTime.t()
+          updated_at: DateTime.t(),
+          url: URI.t()
         }
 
   @spec create(String.t(), module()) :: {:ok, String.t()} | Transport.error()
   def create(url, repo) do
     url_struct = %URL{id: Util.gen_id(), url: URI.parse(url)}
-    :ok = repo.put(url_struct)
-    {:ok, url_struct.id}
+
+    {:ok, extant_url} = repo.get(url_struct.id)
+
+    if is_nil(extant_url) do
+      :ok = repo.put(url_struct)
+      {:ok, url_struct.id}
+    else
+      create(url, repo)
+    end
   end
 
   @spec get(String.t(), module()) :: {:ok, URL.t()} | Transport.error()

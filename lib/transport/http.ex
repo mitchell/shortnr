@@ -1,4 +1,4 @@
-defmodule Shortnr.Transport.Http do
+defmodule Shortnr.Transport.HTTP do
   import Plug.Conn
 
   @type ok_error :: {:ok, term(), Plug.Conn.t()} | error()

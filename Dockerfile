@@ -11,7 +11,7 @@ RUN env MIX_ENV=prod mix release
 FROM debian:buster-20191014-slim
 
 WORKDIR /home/shortnr
-COPY --from=build /root/shortnr/_build/prod/rel/service/ .
+COPY --from=build /root/shortnr/_build/prod/rel/shortnr/ .
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libtinfo5=6.1+20181013-2+deb10u2 \
@@ -29,5 +29,5 @@ RUN groupadd -r shortnr && useradd --no-log-init -r -g shortnr shortnr
 RUN chown -R shortnr:shortnr /home/shortnr
 USER shortnr
 
-ENTRYPOINT ["bin/service", "start"]
+ENTRYPOINT ["bin/shortnr", "start"]
 EXPOSE 8080

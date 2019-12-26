@@ -3,7 +3,7 @@ defmodule Shortnr.MixProject do
 
   def project do
     [
-      app: :service,
+      app: :shortnr,
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,

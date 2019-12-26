@@ -1,8 +1,8 @@
 defmodule Shortnr.Transport.Json do
   import Plug.Conn
-  alias Shortnr.Transport.Http
+  alias Shortnr.Transport.HTTP
 
-  @spec decode_request(Plug.Conn.t(), module()) :: Http.ok_error()
+  @spec decode_request(Plug.Conn.t(), module()) :: HTTP.ok_error()
   def decode_request(conn, struct_module) do
     {:ok, body, conn} = read_body(conn)
     {:ok, params} = Jason.decode(body)
@@ -15,7 +15,7 @@ defmodule Shortnr.Transport.Json do
     {:ok, struct(struct_module, params_list), conn}
   end
 
-  @spec encode_response(Http.ok_error()) :: Http.ok_error()
+  @spec encode_response(HTTP.ok_error()) :: HTTP.ok_error()
   def encode_response({:error, {status, response}, conn}) do
     {:ok, json_body} = Jason.encode(%{data: response})
     {:error, {status, json_body}, conn}

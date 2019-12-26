@@ -1,7 +1,12 @@
 import Config
 
-config :service,
-  port: 8080
+config :shortnr,
+  port: 8080,
+  ets_implementation:
+    (fn
+       :test -> :ets
+       _ -> :dets
+     end).(Mix.env())
 
 config :logger, :console,
   format: "date=$date time=$time level=$level$levelpad message=\"$message\" $metadata\n",
