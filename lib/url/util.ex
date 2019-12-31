@@ -1,4 +1,7 @@
 defmodule Shortnr.URL.Util do
+  @moduledoc """
+  URL module utility functions.
+  """
   @id_chars String.codepoints("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXWYZ0123456789")
   @spec gen_id() :: String.t()
   def gen_id do

@@ -1,6 +1,6 @@
 defmodule Shortnr do
   @moduledoc """
-  Documentation for Shortnr.
+  The Shortnr application entry point. Check README for usage documenation.
   """
 
   use Application

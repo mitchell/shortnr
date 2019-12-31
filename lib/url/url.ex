@@ -1,6 +1,9 @@
 defmodule Shortnr.URL do
+  @moduledoc """
+  This module represents both the URL data object, in the form of a struct, and the URL business
+  domain service.
+  """
   alias Shortnr.Transport
-  alias Shortnr.URL
   alias Shortnr.URL.Util
 
   defstruct id: "",
@@ -17,7 +20,7 @@ defmodule Shortnr.URL do
 
   @spec create(String.t(), module()) :: {:ok, String.t()} | Transport.error()
   def create(url, repo) do
-    url_struct = %URL{id: Util.gen_id(), url: URI.parse(url)}
+    url_struct = %__MODULE__{id: Util.gen_id(), url: URI.parse(url)}
 
     {:ok, extant_url} = repo.get(url_struct.id)
 
@@ -29,17 +32,17 @@ defmodule Shortnr.URL do
     end
   end
 
-  @spec get(String.t(), module()) :: {:ok, URL.t()} | Transport.error()
+  @spec get(String.t(), module()) :: {:ok, t()} | Transport.error()
   def get(key, repo) do
     {:ok, _} = repo.get(key)
   end
 
-  @spec list(module()) :: {:ok, list(URL.t())} | Transport.error()
+  @spec list(module()) :: {:ok, list(t())} | Transport.error()
   def list(repo) do
     {:ok, _} = repo.list
   end
 
-  @spec delete(String.t(), module()) :: {:ok, :ignore} | Tranpsport.error()
+  @spec delete(String.t(), module()) :: {:ok, String.t()} | Transport.error()
   def delete(key, repo) do
     :ok = repo.delete(key)
     {:ok, "Success"}

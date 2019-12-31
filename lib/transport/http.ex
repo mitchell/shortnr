@@ -1,8 +1,13 @@
 defmodule Shortnr.Transport.HTTP do
+  @moduledoc """
+  This module contains functions that can be used to handle HTTP requests and send responses, by
+  manipulating Plug.Conn.
+  """
+
   import Plug.Conn
 
-  @type ok_error :: {:ok, term(), Plug.Conn.t()} | error()
   @type error :: {:error, {atom(), String.t()}, Plug.Conn.t()}
+  @type ok_error :: {:ok, term(), Plug.Conn.t()} | error()
 
   @spec handle(ok_error(), (... -> ok_error())) :: ok_error()
   def handle(error = {:error, _sub_error, _conn}, _func), do: error

@@ -1,4 +1,8 @@
 defmodule Shortnr.Transport.Text do
+  @moduledoc """
+  This modules contains functions to decode and encode text formatted http requests and responses.
+  """
+
   import Plug.Conn
   alias Shortnr.Transport.HTTP
   alias Shortnr.URL

@@ -16,3 +16,9 @@ config :logger, :console,
        :prod -> :info
        _ -> :debug
      end).(Mix.env())
+
+config :credo,
+  checks: [
+    {Credo.Check.Refactor.MapInto, false},
+    {Credo.Check.Warning.LazyLogging, false}
+  ]

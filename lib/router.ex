@@ -1,10 +1,14 @@
 defmodule Shortnr.Router do
+  @moduledoc """
+  This module contains the Router for the Shortnr application. Do not import, other than
+  Application entry.
+  """
   use Plug.ErrorHandler
   use Plug.Router
 
   require Logger
 
-  alias Shortnr.Transport.{Text, HTTP}
+  alias Shortnr.Transport.{HTTP, Text}
   alias Shortnr.URL
 
   plug(Plug.Logger, log: :debug)

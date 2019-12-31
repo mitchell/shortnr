@@ -1,4 +1,8 @@
 defmodule Shortnr.URL.Repo.ETS do
+  @moduledoc """
+  This module is an implemention of the Repo behaviour using the Erlang ETS library.
+  """
+
   @behaviour Shortnr.URL.Repo
 
   @impl true
@@ -16,7 +20,7 @@ defmodule Shortnr.URL.Repo.ETS do
   end
 
   @impl true
-  def list() do
+  def list do
     resp = ets().select(:urls, [{:"$1", [], [:"$1"]}])
     {:ok, resp |> Enum.map(&elem(&1, 1))}
   end
