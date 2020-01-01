@@ -19,6 +19,7 @@ config :logger, :console,
 
 config :credo,
   checks: [
+    # Ignore these checks because they don't apply to the projects Elixir version
     {Credo.Check.Refactor.MapInto, false},
     {Credo.Check.Warning.LazyLogging, false}
   ]

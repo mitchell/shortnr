@@ -15,45 +15,57 @@ defmodule Shortnr.Router do
   plug(:match)
   plug(:dispatch)
 
+  get "/" do
+    conn
+    |> HTTP.wrap()
+    |> HTTP.handle(fn -> URL.list(URL.Repo.ETS) end)
+    |> Text.encode_response()
+    |> HTTP.send(:ok)
+  end
+
   post "/urls/:url" do
-    {:ok, url, conn}
+    conn
+    |> HTTP.wrap(url)
     |> HTTP.handle(&URL.create(&1, URL.Repo.ETS))
     |> Text.encode_response()
-    |> HTTP.send(:created, conn)
+    |> HTTP.send(:created)
   end
 
   get "/urls" do
-    {:ok, :ignore, conn}
+    conn
+    |> HTTP.wrap()
     |> HTTP.handle(fn -> URL.list(URL.Repo.ETS) end)
     |> Text.encode_response()
-    |> HTTP.send(:ok, conn)
+    |> HTTP.send(:ok)
   end
 
   get "/:id" do
-    {:ok, id, conn}
+    conn
+    |> HTTP.wrap(id)
     |> HTTP.handle(&URL.get(&1, URL.Repo.ETS))
     |> Text.encode_response()
-    |> HTTP.send(:found, conn)
+    |> HTTP.send(:found)
   end
 
   delete "/:id" do
-    {:ok, id, conn}
+    conn
+    |> HTTP.wrap(id)
     |> HTTP.handle(&URL.delete(&1, URL.Repo.ETS))
     |> Text.encode_response()
-    |> HTTP.send(:ok, conn)
+    |> HTTP.send(:ok)
   end
 
   match _ do
-    {:error, {:not_found, "route not found"}, conn}
-    |> Text.encode_response()
-    |> HTTP.send(:ignore, conn)
+    conn
+    |> HTTP.wrap({:not_found, "route not found"})
+    |> HTTP.send()
   end
 
   def handle_errors(conn, %{kind: _kind, reason: reason, stack: stack}) do
-    Logger.error(reason, stack: stack)
+    Logger.error(inspect(reason), stack: ~s|"#{inspect(stack)}"|)
 
-    {:error, {:internal_server_error, "internal server error"}, conn}
-    |> Text.encode_response()
-    |> HTTP.send(:ignore, conn)
+    conn
+    |> HTTP.wrap({:internal_server_error, "internal server error"})
+    |> HTTP.send()
   end
 end

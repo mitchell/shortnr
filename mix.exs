@@ -4,6 +4,7 @@ defmodule Shortnr.MixProject do
   def project do
     [
       app: :shortnr,
+      description: "A small & simple url shortener",
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
@@ -24,7 +25,6 @@ defmodule Shortnr.MixProject do
     [
       {:plug_cowboy, "~> 2.0"},
       {:elixir_uuid, "~> 1.2"},
-      {:jason, "~> 1.1"},
       {:dialyxir, "~> 0.5.1", only: [:dev], runtime: false},
       {:credo, "~> 1.1.5", only: [:dev, :test], runtime: false}
       # {:dep_from_hexpm, "~> 0.3.0"},

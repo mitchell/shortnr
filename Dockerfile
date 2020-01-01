@@ -1,4 +1,4 @@
-FROM elixir:1.9-slim as build
+FROM elixir:1.9 as build
 
 WORKDIR /root/shortnr
 COPY . .
@@ -8,7 +8,7 @@ RUN mix local.rebar --force
 
 RUN env MIX_ENV=prod mix release
 
-FROM debian:buster-20191014-slim
+FROM debian:stable-20191224-slim
 
 WORKDIR /home/shortnr
 COPY --from=build /root/shortnr/_build/prod/rel/shortnr/ .

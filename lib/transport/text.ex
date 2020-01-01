@@ -5,7 +5,7 @@ defmodule Shortnr.Transport.Text do
 
   import Plug.Conn
   alias Shortnr.Transport.HTTP
-  alias Shortnr.URL
+  alias Shortnr.Transport.Text.Encodable
 
   @spec decode_request(Plug.Conn.t()) :: HTTP.ok_error()
   def decode_request(conn) do
@@ -24,11 +24,20 @@ defmodule Shortnr.Transport.Text do
     {:ok, for(item <- body, into: "", do: "#{item}\n"), conn}
   end
 
-  def encode_response({:ok, %URL{url: url}, conn}) do
-    {:ok, url, conn}
-  end
-
   def encode_response({:ok, body, conn}) do
-    {:ok, "#{body}", conn}
+    {:ok, Encodable.encode(body), conn}
   end
+end
+
+defprotocol Shortnr.Transport.Text.Encodable do
+  @moduledoc """
+  Implement this protocol for your type if you would like to text encode it.
+  """
+
+  @fallback_to_any true
+  def encode(encodable)
+end
+
+defimpl Shortnr.Transport.Text.Encodable, for: Any do
+  def encode(encodable), do: to_string(encodable)
 end

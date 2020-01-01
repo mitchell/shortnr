@@ -20,21 +20,24 @@ defmodule Shortnr.URL do
 
   @spec create(String.t(), module()) :: {:ok, String.t()} | Transport.error()
   def create(url, repo) do
-    url_struct = %__MODULE__{id: Util.gen_id(), url: URI.parse(url)}
+    url_struct = %__MODULE__{id: Util.generate_id(), url: URI.parse(url)}
 
     {:ok, extant_url} = repo.get(url_struct.id)
 
-    if is_nil(extant_url) do
+    if extant_url do
+      create(url, repo)
+    else
       :ok = repo.put(url_struct)
       {:ok, url_struct.id}
-    else
-      create(url, repo)
     end
   end
 
   @spec get(String.t(), module()) :: {:ok, t()} | Transport.error()
   def get(key, repo) do
-    {:ok, _} = repo.get(key)
+    case repo.get(key) do
+      {:ok, nil} -> {:error, {:not_found, "url could not be found with the given id"}}
+      {:ok, url} -> {:ok, url}
+    end
   end
 
   @spec list(module()) :: {:ok, list(t())} | Transport.error()
@@ -48,11 +51,17 @@ defmodule Shortnr.URL do
     {:ok, "Success"}
   end
 
+  defimpl Transport.Text.Encodable do
+    alias Shortnr.URL
+    @spec encode(URL.t()) :: String.t()
+    def encode(url), do: URI.to_string(url.url)
+  end
+
   defimpl String.Chars do
     alias Shortnr.URL
     @spec to_string(URL.t()) :: String.t()
     def to_string(url) do
-      "id=#{url.id} created=#{url.created_at} updated=#{url.updated_at} url=#{url.url}"
+      "id=#{url.id} created_at=#{url.created_at} updated_at=#{url.updated_at} url=#{url.url}"
     end
   end
 end
