@@ -2,10 +2,11 @@ defmodule Shortnr.URL.Repo.ETS do
   @moduledoc """
   This module is an implemention of the Repo behaviour using the Erlang ETS library.
   """
+  alias Shortnr.URL.Repo
 
-  @behaviour Shortnr.URL.Repo
+  @behaviour Repo
 
-  @impl true
+  @impl Repo
   def get(key) do
     case ets().lookup(:urls, key) |> List.first() do
       {_, url} -> {:ok, url}
@@ -13,25 +14,25 @@ defmodule Shortnr.URL.Repo.ETS do
     end
   end
 
-  @impl true
+  @impl Repo
   def put(url) do
     :ok = ets().insert(:urls, {url.id, url})
     :ok
   end
 
-  @impl true
+  @impl Repo
   def list do
     resp = ets().select(:urls, [{:"$1", [], [:"$1"]}])
     {:ok, resp |> Enum.map(&elem(&1, 1))}
   end
 
-  @impl true
+  @impl Repo
   def delete(key) do
     :ok = ets().delete(:urls, key)
     :ok
   end
 
-  @impl true
+  @impl Repo
   def reset do
     :ok = ets().delete_all_objects(:urls)
   end

@@ -64,3 +64,12 @@ defmodule Shortnr.Transport.HTTP do
   defp status_to_code(:not_found), do: 404
   defp status_to_code(:internal_server_error), do: 500
 end
+
+defmodule Shortnr.Transport.HTTP.Endpoints do
+  @moduledoc """
+  This modules is a behaviour that should be implemented by each service that needs to be routed by
+  Plug.Router
+  """
+
+  @callback select(Plug.Conn.t(), atom, term) :: Plug.Conn.t()
+end

@@ -3,15 +3,13 @@ defmodule Shortnr do
   The Shortnr application entry point. Check README for usage documenation.
   """
 
-  use Application
   require Logger
+  use Application
 
-  @impl true
+  @impl Application
   def start(_type, _args) do
-    port = port()
-
     children = [
-      {Plug.Cowboy, scheme: :http, plug: Shortnr.Router, options: [port: port]}
+      {Plug.Cowboy, scheme: :http, plug: Shortnr.Router, options: [port: port()]}
     ]
 
     if ets_implementation() == :dets do
@@ -20,11 +18,11 @@ defmodule Shortnr do
       :ets.new(:urls, [:set, :named_table])
     end
 
-    Logger.info("server starting", port: port)
+    Logger.info("server starting", port: port())
     Supervisor.start_link(children, strategy: :one_for_one)
   end
 
-  @impl true
+  @impl Application
   def stop(_state) do
     if ets_implementation() == :dets, do: :dets.close(:urls)
   end

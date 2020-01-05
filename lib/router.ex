@@ -3,57 +3,27 @@ defmodule Shortnr.Router do
   This module contains the Router for the Shortnr application. Do not import, other than
   Application entry.
   """
-  use Plug.ErrorHandler
-  use Plug.Router
+  alias Shortnr.Transport.HTTP
+  alias Shortnr.URL
 
   require Logger
 
-  alias Shortnr.Transport.{HTTP, Text}
-  alias Shortnr.URL
+  use Plug.ErrorHandler
+  use Plug.Router
 
   plug(Plug.Logger, log: :debug)
   plug(:match)
   plug(:dispatch)
 
-  get "/" do
-    conn
-    |> HTTP.wrap()
-    |> HTTP.handle(fn -> URL.list(URL.Repo.ETS) end)
-    |> Text.encode_response()
-    |> HTTP.send(:ok)
-  end
+  # BEGIN URL routes
+  post("/urls/:url", do: URL.Endpoints.select(conn, :create, url))
 
-  post "/urls/:url" do
-    conn
-    |> HTTP.wrap(url)
-    |> HTTP.handle(&URL.create(&1, URL.Repo.ETS))
-    |> Text.encode_response()
-    |> HTTP.send(:created)
-  end
+  get("/", do: URL.Endpoints.select(conn, :list))
+  get("/urls", do: URL.Endpoints.select(conn, :list))
+  get("/:id", do: URL.Endpoints.select(conn, :get, id))
 
-  get "/urls" do
-    conn
-    |> HTTP.wrap()
-    |> HTTP.handle(fn -> URL.list(URL.Repo.ETS) end)
-    |> Text.encode_response()
-    |> HTTP.send(:ok)
-  end
-
-  get "/:id" do
-    conn
-    |> HTTP.wrap(id)
-    |> HTTP.handle(&URL.get(&1, URL.Repo.ETS))
-    |> Text.encode_response()
-    |> HTTP.send(:found)
-  end
-
-  delete "/:id" do
-    conn
-    |> HTTP.wrap(id)
-    |> HTTP.handle(&URL.delete(&1, URL.Repo.ETS))
-    |> Text.encode_response()
-    |> HTTP.send(:ok)
-  end
+  delete("/:id", do: URL.Endpoints.select(conn, :delete, id))
+  # END
 
   match _ do
     conn

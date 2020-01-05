@@ -3,28 +3,29 @@ defmodule Shortnr.Transport.Text do
   This modules contains functions to decode and encode text formatted http requests and responses.
   """
 
-  import Plug.Conn
   alias Shortnr.Transport.HTTP
   alias Shortnr.Transport.Text.Encodable
 
-  @spec decode_request(Plug.Conn.t()) :: HTTP.ok_error()
-  def decode_request(conn) do
+  import Plug.Conn
+
+  @spec decode(HTTP.ok_error()) :: HTTP.ok_error()
+  def decode({:ok, _body, conn}) do
     {:ok, body, conn} = read_body(conn)
     {:ok, body, conn}
   end
 
-  @spec encode_response(HTTP.ok_error()) :: HTTP.ok_error()
-  def encode_response(ok_error = {:error, _, _}), do: ok_error
+  @spec encode(HTTP.ok_error()) :: HTTP.ok_error()
+  def encode(ok_error = {:error, _, _}), do: ok_error
 
-  def encode_response({:ok, [], conn}) do
+  def encode({:ok, [], conn}) do
     {:ok, "", conn}
   end
 
-  def encode_response({:ok, body, conn}) when is_list(body) do
+  def encode({:ok, body, conn}) when is_list(body) do
     {:ok, for(item <- body, into: "", do: "#{item}\n"), conn}
   end
 
-  def encode_response({:ok, body, conn}) do
+  def encode({:ok, body, conn}) do
     {:ok, Encodable.encode(body), conn}
   end
 end
