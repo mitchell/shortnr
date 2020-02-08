@@ -8,7 +8,7 @@ defmodule Shortnr.URL.Endpoints do
 
   @behaviour Endpoints
 
-  @impl Endpoints
+  @impl true
   def select(conn, name, arg \\ nil)
 
   def select(conn, :list, _arg) do

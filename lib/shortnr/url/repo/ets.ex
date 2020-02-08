@@ -6,7 +6,7 @@ defmodule Shortnr.URL.Repo.ETS do
 
   @behaviour Repo
 
-  @impl Repo
+  @impl true
   def get(key) do
     case ets().lookup(:urls, key) |> List.first() do
       {_, url} -> {:ok, url}
@@ -14,25 +14,25 @@ defmodule Shortnr.URL.Repo.ETS do
     end
   end
 
-  @impl Repo
+  @impl true
   def put(url) do
     :ok = ets().insert(:urls, {url.id, url})
     :ok
   end
 
-  @impl Repo
+  @impl true
   def list do
     resp = ets().select(:urls, [{:"$1", [], [:"$1"]}])
     {:ok, resp |> Enum.map(&elem(&1, 1))}
   end
 
-  @impl Repo
+  @impl true
   def delete(key) do
     :ok = ets().delete(:urls, key)
     :ok
   end
 
-  @impl Repo
+  @impl true
   def reset do
     :ok = ets().delete_all_objects(:urls)
   end

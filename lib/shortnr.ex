@@ -6,7 +6,7 @@ defmodule Shortnr do
   require Logger
   use Application
 
-  @impl Application
+  @impl true
   def start(_type, _args) do
     children = [
       {Plug.Cowboy, scheme: :http, plug: Shortnr.Router, options: [port: port()]}
@@ -22,7 +22,7 @@ defmodule Shortnr do
     Supervisor.start_link(children, strategy: :one_for_one)
   end
 
-  @impl Application
+  @impl true
   def stop(_state) do
     if ets_implementation() == :dets, do: :dets.close(:urls)
   end
