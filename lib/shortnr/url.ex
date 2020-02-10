@@ -4,7 +4,6 @@ defmodule Shortnr.URL do
   domain service.
   """
   alias Shortnr.Transport
-  alias Shortnr.URL.Util
 
   defstruct id: "",
             created_at: DateTime.utc_now(),
@@ -20,7 +19,7 @@ defmodule Shortnr.URL do
 
   @spec create(String.t(), module()) :: {:ok, String.t()} | Transport.error()
   def create(url, repo) do
-    url_struct = %__MODULE__{id: Util.generate_id(), url: URI.parse(url)}
+    url_struct = %__MODULE__{id: generate_id(), url: URI.parse(url)}
 
     {:ok, extant_url} = repo.get(url_struct.id)
 
@@ -49,6 +48,14 @@ defmodule Shortnr.URL do
   def delete(key, repo) do
     :ok = repo.delete(key)
     {:ok, "Success"}
+  end
+
+  @id_chars String.codepoints("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXWYZ0123456789")
+  @spec generate_id() :: String.t()
+  def generate_id do
+    for _ <- 0..7,
+        into: "",
+        do: Enum.random(@id_chars)
   end
 
   defimpl Transport.Text.Encodable do
