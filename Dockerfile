@@ -1,4 +1,4 @@
-FROM elixir:1.9 as build
+FROM elixir:1.10 as build
 
 WORKDIR /root/shortnr
 COPY . .
