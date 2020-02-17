@@ -1,9 +1,9 @@
 FROM elixir:1.10 as dev
 
-WORKDIR /root/shortnr
+WORKDIR /shortnr
 
 RUN apt-get update
-RUN apt-get install -y fish vim
+RUN apt-get install -y fish vim rsync
 
 RUN mix local.hex --force
 RUN mix local.rebar --force

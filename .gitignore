@@ -27,3 +27,9 @@ service-*.tar
 
 # Ignore development DETS file
 urls
+
+# Terraform related files
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform/

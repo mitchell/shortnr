@@ -16,13 +16,13 @@ defmodule Shortnr.Router do
   plug(:dispatch)
 
   # BEGIN URL routes
-  post("/urls/:url", do: URL.Endpoints.select(conn, :create, url))
+  post("/:url", do: URL.Endpoints.select(conn, :create, url))
 
   get("/", do: URL.Endpoints.select(conn, :list))
-  get("/urls", do: URL.Endpoints.select(conn, :list))
   get("/:id", do: URL.Endpoints.select(conn, :get, id))
 
   delete("/:id", do: URL.Endpoints.select(conn, :delete, id))
+
   # END
 
   match _ do
