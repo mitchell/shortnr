@@ -38,8 +38,27 @@ defmodule Shortnr.MixProject do
     [
       build: &docker_build/1,
       "build.dev": &docker_build_dev/1,
-      lint: ["compile", "dialyzer", "credo --strict"]
+      lint: ["compile", "dialyzer", "credo --strict"],
+      "infra.apply": &infra_apply/1,
+      "infra.plan": &infra_plan/1,
+      "infra.destroy": &infra_destroy/1
     ]
+  end
+
+  defp infra_apply(_) do
+    if Mix.shell().yes?("Are you sure you want to apply? (Have you run plan?)") do
+      0 = Mix.shell().cmd("cd ./infra && terraform validate && terraform apply -auto-approve")
+    end
+  end
+
+  defp infra_destroy(_) do
+    if Mix.shell().yes?("Are you sure you want to destroy?") do
+      0 = Mix.shell().cmd("cd ./infra && terraform validate && terraform destroy -auto-approve")
+    end
+  end
+
+  defp infra_plan(_) do
+    0 = Mix.shell().cmd("cd ./infra && terraform validate && terraform plan")
   end
 
   defp docker_build(_) do

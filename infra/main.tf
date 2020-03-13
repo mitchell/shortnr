@@ -24,7 +24,7 @@ variable "deletion_protection" {
 }
 
 output "shortnr_static_ip" {
-  value       = google_compute_address.selfpass.address
+  value       = google_compute_address.shortnr.address
   description = "The public static IP address used by the Shortnr instance."
 }
 
@@ -33,17 +33,17 @@ data "google_compute_image" "debian_image" {
   project = "debian-cloud"
 }
 
-resource "google_compute_address" "selfpass" {
-  name = "selfpass-address"
+resource "google_compute_address" "shortnr" {
+  name = "shortnr-address"
 }
 
-resource "google_compute_instance" "selfpass" {
-  name                = "selfpass-instance"
+resource "google_compute_instance" "shortnr" {
+  name                = "shortnr-instance"
   machine_type        = "f1-micro"
   deletion_protection = var.deletion_protection
 
   boot_disk {
-    auto_delete = false
+    auto_delete = true
 
     initialize_params {
       image = data.google_compute_image.debian_image.self_link
@@ -53,7 +53,7 @@ resource "google_compute_instance" "selfpass" {
   network_interface {
     network = "default"
     access_config {
-      nat_ip = google_compute_address.selfpass.address
+      nat_ip = google_compute_address.shortnr.address
     }
   }
 
