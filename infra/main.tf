@@ -3,8 +3,8 @@
 provider "google" {
   version = "3.8.0"
   project = var.project_id
-  region  = "us-east4"
-  zone    = "us-east4-b"
+  region  = var.region
+  zone    = var.zone
 }
 
 variable "ssh_keys" {
@@ -17,10 +17,14 @@ variable "project_id" {
   description = "The name of the google cloud project you're deploying to."
 }
 
-variable "deletion_protection" {
-  type        = bool
-  description = "Whether to apply deletion protection to the shortnr-instance."
-  default     = true
+variable "region" {
+  type        = string
+  description = "The region you want your infrastructure to deploy to."
+}
+
+variable "zone" {
+  type        = string
+  description = "The zone, within the region, that you want to deploy to."
 }
 
 output "shortnr_static_ip" {
@@ -34,13 +38,13 @@ data "google_compute_image" "debian_image" {
 }
 
 resource "google_compute_address" "shortnr" {
-  name = "shortnr-address"
+  name         = "shortnr-address"
+  network_tier = "STANDARD"
 }
 
 resource "google_compute_instance" "shortnr" {
-  name                = "shortnr-instance"
-  machine_type        = "f1-micro"
-  deletion_protection = var.deletion_protection
+  name         = "shortnr-instance"
+  machine_type = "f1-micro"
 
   boot_disk {
     auto_delete = true
@@ -53,7 +57,8 @@ resource "google_compute_instance" "shortnr" {
   network_interface {
     network = "default"
     access_config {
-      nat_ip = google_compute_address.shortnr.address
+      nat_ip       = google_compute_address.shortnr.address
+      network_tier = "STANDARD"
     }
   }
 
