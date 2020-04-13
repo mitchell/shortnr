@@ -16,4 +16,4 @@ config :credo,
     {Credo.Check.Warning.LazyLogging, false}
   ]
 
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"

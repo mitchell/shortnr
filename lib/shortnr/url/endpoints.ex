@@ -3,15 +3,9 @@ defmodule Shortnr.URL.Endpoints do
   This module implements the Endpoints behaviour.
   """
   alias Shortnr.Transport.{HTTP, Text}
-  alias Shortnr.Transport.HTTP.Endpoints
   alias Shortnr.URL
 
-  @behaviour Endpoints
-
-  @impl true
-  def select(conn, name, arg \\ nil)
-
-  def select(conn, :list, _arg) do
+  def list(conn) do
     conn
     |> HTTP.wrap()
     |> HTTP.handle(fn -> URL.list(URL.Repo.ETS) end)
@@ -19,7 +13,7 @@ defmodule Shortnr.URL.Endpoints do
     |> HTTP.send(:ok)
   end
 
-  def select(conn, :create, url) do
+  def create(conn, url) do
     conn
     |> HTTP.wrap(url)
     |> HTTP.handle(&URL.create(&1, URL.Repo.ETS))
@@ -27,7 +21,7 @@ defmodule Shortnr.URL.Endpoints do
     |> HTTP.send(:created)
   end
 
-  def select(conn, :get, id) do
+  def get(conn, id) do
     conn
     |> HTTP.wrap(id)
     |> HTTP.handle(&URL.get(&1, URL.Repo.ETS))
@@ -35,7 +29,7 @@ defmodule Shortnr.URL.Endpoints do
     |> HTTP.send(:found)
   end
 
-  def select(conn, :delete, id) do
+  def delete(conn, id) do
     conn
     |> HTTP.wrap(id)
     |> HTTP.handle(&URL.delete(&1, URL.Repo.ETS))

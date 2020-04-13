@@ -37,5 +37,8 @@ defmodule Shortnr.URL.Repo.ETS do
     :ok = ets().delete_all_objects(:urls)
   end
 
-  defp ets, do: Application.fetch_env!(:shortnr, :ets_implementation)
+  defp ets do
+    {:ok, impl} = Application.fetch_env(:shortnr, :ets_implementation)
+    impl
+  end
 end

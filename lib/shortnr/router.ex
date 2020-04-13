@@ -15,15 +15,12 @@ defmodule Shortnr.Router do
   plug(:match)
   plug(:dispatch)
 
-  # BEGIN URL routes
-  post("/:url", do: URL.Endpoints.select(conn, :create, url))
+  post("/:url", do: URL.Endpoints.create(conn, url))
 
-  get("/", do: URL.Endpoints.select(conn, :list))
-  get("/:id", do: URL.Endpoints.select(conn, :get, id))
+  get("/", do: URL.Endpoints.list(conn))
+  get("/:id", do: URL.Endpoints.get(conn, id))
 
-  delete("/:id", do: URL.Endpoints.select(conn, :delete, id))
-
-  # END
+  delete("/:id", do: URL.Endpoints.delete(conn, id))
 
   match _ do
     conn
