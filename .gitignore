@@ -33,3 +33,6 @@ urls
 *.tfstate.backup
 *.tfvars
 .terraform/
+
+# Vagrant state files
+.vagrant/

@@ -10,7 +10,13 @@ defmodule Shortnr.MixProject do
       start_permanent: Mix.env() == :prod,
       dialyzer: [ignore_warnings: "dialyzer.ignore-warnings"],
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      releases: [
+        shortnr: [
+          include_executables_for: [:unix],
+          applications: [shortnr: :permanent]
+        ]
+      ]
     ]
   end
 
@@ -37,7 +43,6 @@ defmodule Shortnr.MixProject do
   defp aliases do
     [
       build: &docker_build/1,
-      "build.dev": &docker_build_dev/1,
       lint: ["compile", "dialyzer", "credo --strict"],
       "infra.apply": &infra_apply/1,
       "infra.plan": &infra_plan/1,
@@ -63,9 +68,5 @@ defmodule Shortnr.MixProject do
 
   defp docker_build(_) do
     0 = Mix.shell().cmd("docker build -t shortnr:latest .")
-  end
-
-  defp docker_build_dev(_) do
-    0 = Mix.shell().cmd("docker build -t shortnr_dev:latest -f ./Dockerfile.dev .")
   end
 end
