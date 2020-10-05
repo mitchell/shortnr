@@ -14,7 +14,7 @@ Vagrant.configure('2') do |config| # rubocop:disable Metrics/BlockLength
     dev.vm.network 'private_network', ip: '192.168.50.11'
 
     dev.vm.provider 'virtualbox' do |vb|
-      vb.memory = '2048'
+      vb.memory = '4096'
       vb.cpus = 4
     end
 
@@ -131,7 +131,7 @@ Vagrant.configure('2') do |config| # rubocop:disable Metrics/BlockLength
     prod.vm.network 'private_network', ip: '192.168.50.10'
 
     prod.vm.provider 'virtualbox' do |vb|
-      vb.memory = '2048'
+      vb.memory = '4096'
       vb.cpus = 4
     end
 

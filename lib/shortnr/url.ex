@@ -4,6 +4,7 @@ defmodule Shortnr.URL do
   domain service.
   """
   alias Shortnr.Transport
+  alias Shortnr.URL.Repo
 
   defstruct id: "",
             created_at: DateTime.utc_now(),
@@ -17,37 +18,39 @@ defmodule Shortnr.URL do
           url: URI.t()
         }
 
-  @spec create(String.t(), module()) :: {:ok, String.t()} | Transport.error()
-  def create(url, repo) do
+  @spec create(String.t()) :: {:ok, String.t()} | Transport.error()
+  def create(url) when is_binary(url) do
     url_struct = %__MODULE__{id: generate_id(), url: URI.parse(url)}
 
-    {:ok, extant_url} = repo.get(url_struct.id)
-
-    if extant_url do
-      create(url, repo)
-    else
-      :ok = repo.put(url_struct)
-      {:ok, url_struct.id}
-    end
+    url_struct.id
+    |> Repo.get()
+    |> create_if_no_collision(url_struct, url)
   end
 
-  @spec get(String.t(), module()) :: {:ok, t()} | Transport.error()
-  def get(key, repo) do
-    case repo.get(key) do
-      {:ok, nil} -> {:error, {:not_found, "url could not be found with the given id"}}
-      {:ok, url} -> {:ok, url}
-    end
+  defp create_if_no_collision({:ok, nil}, %__MODULE__{id: id} = url, _url) do
+    :ok = Repo.put(url)
+    {:ok, id}
   end
 
-  @spec list(module()) :: {:ok, list(t())} | Transport.error()
-  def list(repo) do
-    {:ok, _} = repo.list
+  defp create_if_no_collision({:ok, _}, _url_struct, url) when is_binary(url), do: create(url)
+
+  @spec get(String.t()) :: {:ok, t()} | Transport.error()
+  def get(key) do
+    key
+    |> Repo.get()
+    |> handle_errors
   end
 
-  @spec delete(String.t(), module()) :: {:ok, String.t()} | Transport.error()
-  def delete(key, repo) do
-    :ok = repo.delete(key)
-    {:ok, "Success"}
+  @spec list() :: {:ok, list(t())}
+  def list do
+    handle_errors(Repo.list())
+  end
+
+  @spec delete(String.t()) :: {:ok, String.t()}
+  def delete(key) do
+    key
+    |> Repo.delete()
+    |> handle_errors
   end
 
   @id_chars String.codepoints("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXWYZ0123456789")
@@ -57,6 +60,13 @@ defmodule Shortnr.URL do
         into: "",
         do: Enum.random(@id_chars)
   end
+
+  defp handle_errors({:ok, nil}),
+    do: {:error, {:not_found, "url could not be found with the given id"}}
+
+  defp handle_errors({:ok, _} = response), do: response
+
+  defp handle_errors(:ok), do: {:ok, "Success"}
 
   defimpl Transport.Text.Encodable do
     alias Shortnr.URL
